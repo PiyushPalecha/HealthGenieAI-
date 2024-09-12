@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HealthGenie AI - Analysis Results</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>HealthGenie AI</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <section id="results">
+                <h2>Analysis Results</h2>
+                <div class="result-item">
+                    <h3>Disease Name</h3>
+                    <p>{{ results.disease_name }}</p>
+                </div>
+                <div class="result-item">
+                    <h3>Symptoms</h3>
+                    <ul>
+                        {% for symptom in results.symptoms %}
+                            <li>{{ symptom }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="result-item">
+                    <h3>Treatment</h3>
+                    <ul>
+                        {% for treatment in results.treatment %}
+                            <li>{{ treatment }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <!-- <div class="result-item">
+                    <h3>Recommended Medications</h3>
+                    <ul>
+                        {% for medication in results.medicine %}
+                            <li>{{ medicine }}</li>
+                        {% endfor %}
+                    </ul>
+                </div> -->
+                <div class="result-item">
+                    <h3>Specialized Doctor</h3>
+                    <p>{{ results.specialized_doctor }}</p>
+                </div>
+                <div class="result-item">
+                    <h3>Immediate Actions</h3>
+                    <ul>
+                        {% for action in results.immediate_actions %}
+                            <li>{{ action }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="result-item">
+                    <h3>Possible Causes</h3>
+                    <ul>
+                        {% for cause in results.causes %}
+                            <li>{{ cause }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <!-- <div class="result-item">
+                    <h3>medicinal_plants</h3>
+                    <ul>
+                        {% for cause in results.medicinal_plants %}
+                            <li>{{ medicinal_plants }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="result-item">
+                    <h3>Additional Information</h3>
+                    <p>{{ results.additional_information }}</p>
+                </div> -->
+                <a href="/" class="button">Go back</a>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>© 2024 HealthGenie AI. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="static/script.js"></script>
+</body>
+</html>

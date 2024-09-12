@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthGenie AI</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+
+<body>
+  <header>
+    <h1>HealthGenie AI</h1>
+    <nav>
+      <ul>
+        <!-- <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="feedback.html">Feedback</a></li> -->
+
+        <li>Home</li>
+        <li>About</li>
+        <li>Projects</li>
+        <li>Contact</li>
+        <li>Feedback</li>
+      </ul>
+
+    </nav>
+  </header>
+  <main>
+    <div class="container">
+      <section id="intro">
+        <h2>Welcome to HealthGenie AI</h2>
+        <center><p class="text-center">Your personal assistant for symptom analysis and personalized treatment recommendations.</p></center>
+      </section>
+      <section id="form">
+        <h2>Analyze Your Symptoms</h2>
+        <form action="/analyze" method="post">
+          <label for="user_input">Enter your disease name:</label>
+          <input type="text" id="user_input" name="user_input" required aria-label="Enter your symptoms or disease name">
+          <button type="submit">Analyze</button>
+        </form>
+      </section>
+      <section id="image-analysis">
+        <h2>Upload Image for Analysis</h2>
+
+        <form id="image-form">
+          <button type="button" id="capture-button">
+            <div id="video-container"></div> Capture Image
+          </button>
+
+          <input type="file" id="image-input" accept="image/*" aria-label="Upload an image for analysis">
+          <button type="button" id="upload-button">Upload Image</button>
+          <button type="button" id="store-button">Store Image</button>
+        </form>
+
+        <div id="image-preview"></div>
+        <div id="image-analysis-results"></div>
+        <div id="loading-indicator"></div>
+      </section>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 HealthGenie AI. All rights reserved.</p>
+      <a href="#" class="social-link">
+        <i class="fa fa-facebook"></i> </a>
+      <a href="#" class="social-link">
+        <i class="fa fa-twitter"></i> </a>
+      <a href="#" class="social-link">
+        <i class="fa fa-linkedin"></i>   
+ </a>
+    </div>
+  </footer>
+  <script>
+    const captureButton = document.getElementById('capture-button');
+    const uploadButton = document.getElementById('upload-button');
+    const imagePreview = document.getElementById('image-preview');
+    const imageAnalysisResults = document.getElementById('image-analysis-results');
+    const storeButton = document.getElementById('store-button');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    let capturedImage = true;
+
+    function captureImage() {
+  navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    .then(stream => {
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      video.play();
+
+      const videoContainer = document.createElement('div');
+      videoContainer.classList.add('video-container');
+      videoContainer.appendChild(video);
+      document.body.appendChild(videoContainer);
+
+      const canvas = document.createElement('canvas');
+
+      video.addEventListener('canplay', () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+
+        captureButton.addEventListener('click', () => {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = canvas.toDataURL('image/jpeg', 0.8);
+          capturedImage = dataURLtoFile(imageData, 'captured_image.jpg');
+          imagePreview.innerHTML = `<img src="${imageData}" alt="Captured Image">`;
+
+          stream.getTracks().forEach(track => track.stop());
+          videoContainer.remove();
+          console.log('Image captured successfully');
+        });
+      });
+    })
+    .catch(error => {
+      console.error('Error accessing camera:', error);
+      alert('Error accessing camera. Please check permissions and try again.');
+    });
+}
+
+    function uploadImage(e) {
+      e.preventDefault();
+      if (!capturedImage) {
+        console.error('No image captured');
+        alert('No image captured. Please capture an image first.');
+        return;
+      }
+
+      loadingIndicator.style.display = 'block'; // Show loading indicator
+
+      const formData = new FormData();
+      formData.append('image', capturedImage);
+
+      fetch('/analyze-image', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          imageAnalysisResults.innerHTML = `<p>Disease Analysis Result: ${data.disease_name}</p>`;
+          console.log('Image uploaded and analyzed successfully');
+          loadingIndicator.style.display = 'none'; // Hide loading indicator
+        })
+        .catch(error => {
+          console.error('Error uploading image:', error);
+          alert('Error uploading image. Please try again.');
+          loadingIndicator.style.display = 'none'; // Hide loading indicator
+        });
+    }
+
+    function storeImage() {
+      if (!capturedImage) {
+        console.error('No image captured');
+        alert('No image captured. Please capture an image first.');
+        return;
+      }
+
+      const blob = new Blob([capturedImage], { type: capturedImage.type });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'captured_image.jpg';
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    captureButton.addEventListener('click', captureImage);
+    uploadButton.addEventListener('click', uploadImage);
+    storeButton.addEventListener('click', storeImage);
+  </script>
+</body>
+
+</html>
