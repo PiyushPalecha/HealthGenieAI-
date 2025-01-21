@@ -10,4 +10,4 @@ HealthGenie AI is an AI-powered website for symptom analysis and personalized tr
 ## Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Manmeet-Mandora/HealthGenieAI.git
+   git clone https://github.com/PiyushPalecha/HealthGenieAI.git
